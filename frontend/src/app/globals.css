@@ -1,0 +1,168 @@
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+@import "tailwindcss";
+
+:root {
+  --retro-bg: #1a1a2e;
+  --retro-panel: #16213e;
+  --retro-border: #e94560;
+  --retro-accent: #0f3460;
+  --retro-text: #eaeaea;
+  --retro-text-dim: #8892a4;
+  --retro-highlight: #e94560;
+  --retro-success: #4ade80;
+  --retro-warning: #fbbf24;
+  --retro-blue: #53c0f0;
+}
+
+@theme inline {
+  --color-background: var(--retro-bg);
+  --color-foreground: var(--retro-text);
+}
+
+body {
+  background: var(--retro-bg);
+  color: var(--retro-text);
+  font-family: "Press Start 2P", monospace;
+  font-size: 10px;
+  line-height: 1.8;
+  image-rendering: pixelated;
+}
+
+/* RPG dialogue box panel */
+.retro-panel {
+  background: var(--retro-panel);
+  border: 3px solid var(--retro-border);
+  border-radius: 4px;
+  box-shadow:
+    inset 0 0 0 2px var(--retro-bg),
+    inset 0 0 0 4px var(--retro-accent),
+    0 4px 0 0 rgba(0, 0, 0, 0.4);
+  padding: 16px;
+}
+
+.retro-panel-alt {
+  background: var(--retro-accent);
+  border: 3px solid var(--retro-blue);
+  border-radius: 4px;
+  box-shadow:
+    inset 0 0 0 2px var(--retro-bg),
+    inset 0 0 0 4px var(--retro-panel),
+    0 4px 0 0 rgba(0, 0, 0, 0.4);
+  padding: 16px;
+}
+
+/* Retro button */
+.retro-btn {
+  font-family: "Press Start 2P", monospace;
+  font-size: 10px;
+  background: var(--retro-highlight);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  box-shadow:
+    0 4px 0 0 #b8344d,
+    0 6px 0 0 rgba(0, 0, 0, 0.3);
+  transition: all 0.1s;
+  text-transform: uppercase;
+}
+
+.retro-btn:hover {
+  transform: translateY(1px);
+  box-shadow:
+    0 3px 0 0 #b8344d,
+    0 5px 0 0 rgba(0, 0, 0, 0.3);
+}
+
+.retro-btn:active {
+  transform: translateY(3px);
+  box-shadow:
+    0 1px 0 0 #b8344d,
+    0 2px 0 0 rgba(0, 0, 0, 0.3);
+}
+
+.retro-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+  transform: none;
+}
+
+.retro-btn-alt {
+  background: var(--retro-accent);
+  box-shadow:
+    0 4px 0 0 #0a2540,
+    0 6px 0 0 rgba(0, 0, 0, 0.3);
+}
+
+.retro-btn-alt:hover {
+  box-shadow:
+    0 3px 0 0 #0a2540,
+    0 5px 0 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Retro select / input */
+.retro-input {
+  font-family: "Press Start 2P", monospace;
+  font-size: 10px;
+  background: var(--retro-bg);
+  color: var(--retro-text);
+  border: 2px solid var(--retro-accent);
+  padding: 8px 12px;
+  outline: none;
+}
+
+.retro-input:focus {
+  border-color: var(--retro-highlight);
+}
+
+/* Retro table */
+.retro-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 9px;
+}
+
+.retro-table th {
+  background: var(--retro-accent);
+  color: var(--retro-blue);
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 2px solid var(--retro-border);
+  text-transform: uppercase;
+}
+
+.retro-table td {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--retro-accent);
+}
+
+.retro-table tr:hover td {
+  background: rgba(233, 69, 96, 0.1);
+}
+
+/* Blinking cursor for title */
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.cursor-blink::after {
+  content: "█";
+  animation: blink 1s infinite;
+  color: var(--retro-highlight);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--retro-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--retro-accent);
+  border: 1px solid var(--retro-border);
+}

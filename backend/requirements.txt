@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+pandas
+numpy
+scipy
+plotly
+python-multipart
+pydantic
+pydantic-settings

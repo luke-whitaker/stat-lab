@@ -1,0 +1,25 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - backend-data:/app/data
+      - backend-uploads:/app/uploads
+    environment:
+      - STATLAB_DATABASE_URL=sqlite:///./data/statlab.db
+      - STATLAB_UPLOAD_DIR=./uploads
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000/api
+    depends_on:
+      - backend
+
+volumes:
+  backend-data:
+  backend-uploads:
