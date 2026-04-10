@@ -14,6 +14,8 @@ StatLab is a single-page data lab with three tabs:
 
 No accounts, no database, no setup. Drop in a file and start exploring.
 
+## Front & Back End Deployed via Railway. Click this link to see how it works: https://dynamic-spirit-production-91a5.up.railway.app/
+
 ## Tech Stack
 
 | Layer | Technology |
