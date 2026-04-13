@@ -1,4 +1,7 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://awake-determination-production-b11e.up.railway.app/api"; 
+//commenting out "http://localhost:8000/api"; from the above code to see if adding a direct link to the
+//backend URL in Railway will fix the "Failure to fetch" error message. If this works, I might add
+//the localhost URL back to see if I can have both here; 
 
 // Upload a CSV, get back parsed data
 export async function uploadCSV(file: File): Promise<UploadResult> {
