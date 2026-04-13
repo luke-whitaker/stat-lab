@@ -27,6 +27,7 @@ const TEST_TYPES = [
 export default function HomePage() {
   const [dataset, setDataset] = useState<UploadResult | null>(null);
   const [tab, setTab] = useState<Tab>("data");
+  const [selectedColumns, setSelectedColumns] = useState<Set<string>>(new Set());
 
   // Explore state
   const [stats, setStats] = useState<DescriptiveStat[]>([]);
@@ -44,20 +45,44 @@ export default function HomePage() {
   async function handleUpload(file: File) {
     const result = await uploadCSV(file);
     setDataset(result);
+    setSelectedColumns(new Set(Object.keys(result.columns)));
     setStats([]);
     setCharts([]);
     setTestResult(null);
+  }
+
+  function toggleColumn(col: string) {
+    setSelectedColumns((prev) => {
+      const next = new Set(prev);
+      if (next.has(col)) {
+        next.delete(col);
+      } else {
+        next.add(col);
+      }
+      return next;
+    });
+  }
+
+  function selectAllColumns() {
+    if (dataset) {
+      setSelectedColumns(new Set(Object.keys(dataset.columns)));
+    }
+  }
+
+  function deselectAllColumns() {
+    setSelectedColumns(new Set());
   }
 
   async function handleExplore() {
     if (!dataset) return;
     setLoadingExplore(true);
 
-    const { stats: descriptive } = await getDescriptiveStats(dataset.all_data);
+    const activeCols = Array.from(selectedColumns);
+    const { stats: descriptive } = await getDescriptiveStats(dataset.all_data, activeCols);
     setStats(descriptive);
 
     const numericCols = Object.entries(dataset.columns)
-      .filter(([, info]) => info.type === "quantitative")
+      .filter(([col, info]) => info.type === "quantitative" && selectedColumns.has(col))
       .map(([col]) => col);
 
     const chartResults: { label: string; chart: PlotlyChart }[] = [];
@@ -101,12 +126,12 @@ export default function HomePage() {
 
   const numericCols = dataset
     ? Object.entries(dataset.columns)
-        .filter(([, info]) => info.type === "quantitative")
+        .filter(([col, info]) => info.type === "quantitative" && selectedColumns.has(col))
         .map(([col]) => col)
     : [];
   const categoricalCols = dataset
     ? Object.entries(dataset.columns)
-        .filter(([, info]) => info.type === "qualitative")
+        .filter(([col, info]) => info.type === "qualitative" && selectedColumns.has(col))
         .map(([col]) => col)
     : [];
 
@@ -134,7 +159,7 @@ export default function HomePage() {
             key={t}
             onClick={() => {
               setTab(t);
-              if (t === "explore" && dataset && stats.length === 0) {
+              if (t === "explore" && dataset && selectedColumns.size > 0) {
                 handleExplore();
               }
             }}
@@ -177,42 +202,72 @@ export default function HomePage() {
                 </label>
               </div>
 
-              {/* Column types */}
+              {/* Column types — clickable toggles */}
               <div className="retro-panel">
-                <h2 className="mb-3" style={{ color: "var(--retro-blue)" }}>
-                  Columns
-                </h2>
-                <div className="flex flex-wrap gap-2">
-                  {Object.entries(dataset.columns).map(([col, info]) => (
+                <div className="mb-3 flex items-center justify-between">
+                  <h2 style={{ color: "var(--retro-blue)" }}>
+                    Columns
                     <span
-                      key={col}
-                      className="inline-flex items-center gap-2 rounded px-3 py-1"
-                      style={{
-                        background: "var(--retro-bg)",
-                        border: `1px solid ${info.type === "quantitative" ? "var(--retro-blue)" : "var(--retro-success)"}`,
-                        fontSize: "9px",
-                      }}
+                      className="ml-2"
+                      style={{ color: "var(--retro-text-dim)", fontSize: "9px" }}
                     >
-                      <span>{col}</span>
-                      <span
+                      ({selectedColumns.size}/{Object.keys(dataset.columns).length} selected)
+                    </span>
+                  </h2>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={selectAllColumns}
+                      className="retro-btn-alt"
+                      style={{ fontSize: "8px", padding: "4px 8px" }}
+                    >
+                      All
+                    </button>
+                    <button
+                      onClick={deselectAllColumns}
+                      className="retro-btn-alt"
+                      style={{ fontSize: "8px", padding: "4px 8px" }}
+                    >
+                      None
+                    </button>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {Object.entries(dataset.columns).map(([col, info]) => {
+                    const isSelected = selectedColumns.has(col);
+                    return (
+                      <button
+                        key={col}
+                        onClick={() => toggleColumn(col)}
+                        className="inline-flex items-center gap-2 rounded px-3 py-1 transition-opacity"
                         style={{
-                          color:
-                            info.type === "quantitative"
-                              ? "var(--retro-blue)"
-                              : "var(--retro-success)",
+                          background: "var(--retro-bg)",
+                          border: `1px solid ${info.type === "quantitative" ? "var(--retro-blue)" : "var(--retro-success)"}`,
+                          fontSize: "9px",
+                          opacity: isSelected ? 1 : 0.35,
+                          cursor: "pointer",
                         }}
                       >
-                        {info.type === "quantitative" ? "NUM" : "CAT"}
-                      </span>
-                    </span>
-                  ))}
+                        <span>{col}</span>
+                        <span
+                          style={{
+                            color:
+                              info.type === "quantitative"
+                                ? "var(--retro-blue)"
+                                : "var(--retro-success)",
+                          }}
+                        >
+                          {info.type === "quantitative" ? "NUM" : "CAT"}
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* Preview table */}
+              {/* Data table with pagination */}
               <DataTable
-                columns={Object.keys(dataset.columns)}
-                rows={dataset.preview}
+                columns={Object.keys(dataset.columns).filter((c) => selectedColumns.has(c))}
+                rows={dataset.all_data}
                 totalRows={dataset.row_count}
               />
             </>

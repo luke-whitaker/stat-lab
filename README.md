@@ -100,6 +100,27 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000)
 
+## Version Notes
+
+### v0.2 — Dynamic Column Selection & Pagination (2026-04-13)
+
+**Problem:** After uploading a CSV, users were locked into viewing all columns and only the first 20 rows. There was no way to focus on the variables that mattered, and large datasets were cut off with no way to scroll through the rest.
+
+**What changed:**
+- **Column toggle** — The column badges on the Data tab are now clickable. Tap a column to select or deselect it. Deselected columns dim out visually so it's easy to see what's active. Quick "All" and "None" buttons let you reset fast.
+- **Selection flows downstream** — The columns you select on the Data tab are the columns that show up in Explore (stats and charts) and Analyze (test configuration dropdowns). This means you can narrow your analysis to just the variables you care about before running anything.
+- **Pagination** — The data table now shows all rows (not just the first 20) in pages of 50, with Prev/Next controls and a row counter.
+
+**Why:** The first version was a proof of concept — upload a file, see some stats. But a real analysis workflow starts with choosing which variables to look at. Making column selection the foundation means every feature built on top of it (explore, analyze, future features) automatically respects the user's focus.
+
+---
+
+### v0.1 — Initial Release (2026-04-08)
+
+First working version. CSV upload with drag-and-drop, auto column type detection, descriptive statistics, four statistical tests (t-test, ANOVA, chi-square, correlation), auto-generated histograms and correlation heatmaps. Deployed to Railway with a FastAPI backend and Next.js frontend.
+
+---
+
 ## Related
 
 - [Portfolio Site](https://github.com/luke-whitaker/portfolio-site) — The pixel-art RPG portfolio that inspired this project's visual style
